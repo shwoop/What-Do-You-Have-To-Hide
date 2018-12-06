@@ -1,0 +1,3 @@
+PyPDF2==1.26.*
+# fetch commit for v4.6.3
+git+git://github.com/nolze/msoffcrypto-tool@a85037a910acef2fd71aa2218bd6ea9dfdb5d890
