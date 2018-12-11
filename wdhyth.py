@@ -11,6 +11,7 @@ from sys import (
     stdin
 )
 from tempfile import TemporaryFile
+from filthy_7zip import filthy_7zip_solution
 from zipfile import (
     BadZipfile,
     ZipFile
@@ -37,6 +38,10 @@ def _is_zip_encrypted(_file):
     return False
 
 
+def _is_7zip_encrypted(_file):
+    return filthy_7zip_solution(_file=_file)
+
+
 def _is_ole_encrypted(_file):
     return OfficeFile(_file).is_encrypted()
 
@@ -52,6 +57,7 @@ def _is_ooxml_encrypted(_file):
 
 FILE_INSPECTORS = {
     'zip': _is_zip_encrypted,
+    '7z': _is_7zip_encrypted,
     'pdf': _is_pdf_encrypted,
     'doc': _is_ole_encrypted,
     'xls': _is_ole_encrypted,
