@@ -15,19 +15,20 @@ from tempfile import mkdtemp
 from time import sleep
 
 # Pause for 2 seconds so 7z has a chance to start (dunno what load is like)
-PAUSE = 2
+PAUSE = 0.5
 
 
-def filthy_7zip_solution(_file):
+def _filthy_subprocess_solution(command, _file):
     get_in_the_sea = open(devnull, 'wb')
-    if call('which 7z'.split(' '), stdout=get_in_the_sea, stderr=get_in_the_sea) != 0:
-        raise Exception('7z application is required to process 7z files')
+    binary = command.split(' ')[0]
+    if call('which {}'.format(binary).split(' '), stdout=get_in_the_sea, stderr=get_in_the_sea) != 0:
+        raise Exception('{} cmd line application is missing'.format(binary))
     encrypted = False
     tempdir = None
     try:
         tempdir = mkdtemp()
         proc = Popen(
-            "7z e -p'' -o{} {}".format(tempdir, _file.name).split(' '),
+            command.format(target=tempdir, archive=_file.name).split(' '),
             stdout=get_in_the_sea,
             stderr=get_in_the_sea
         )
@@ -45,3 +46,10 @@ def filthy_7zip_solution(_file):
             rmtree(tempdir)
     return encrypted
 
+
+def filthy_7zip_solution(_file):
+    return _filthy_subprocess_solution(command="7z e -p'' -o{target} {archive}", _file=_file)
+
+
+def filthy_rar_solution(_file):
+    return _filthy_subprocess_solution(command="unrar e -p- {archive} {target}", _file=_file)
